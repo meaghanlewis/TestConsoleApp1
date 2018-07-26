@@ -1,0 +1,17 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+build_script:
+- ps: >-
+    msbuild TestConsoleApp1.sln --% /bl:output.binlog /flp:logfile=output.log;verbosity=diagnostic
+    
+    if (! $?) {
+      echo "Build Error"
+      Push-AppveyorArtifact output.log -Type log
+      Push-AppveyorArtifact output.binlog -Type log
+      exit -1
+    }
+artifacts:
+- path: output.log
+  name: log
+- path: output.binlog
+  name: log
