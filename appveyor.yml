@@ -3,7 +3,7 @@ image: Visual Studio 2017
 build_script:
 - ps: >-
     Import-Module .\tools\MSBLOC.Posh\MSBuildLogOctokitChecker.psm1
-    
+
     msbuild TestConsoleApp1.sln --% /bl:output.binlog /flp:logfile=output.log;verbosity=diagnostic
     
     if (! $?) {
@@ -14,7 +14,7 @@ build_script:
       exit -1
     }
 
-    Send-MsbuildLogAppveyor output.binlog
+    Send-MsbuildLogAppveyor ./output.binlog
 artifacts:
 - path: output.log
   name: log
