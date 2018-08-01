@@ -58,7 +58,6 @@ function  Send-MsbuildLogAppveyor {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [ValidateScript({ [System.IO.File]::Exists($_)})]
         [ValidateNotNullOrEmpty()]
         [string] $Path
     )
