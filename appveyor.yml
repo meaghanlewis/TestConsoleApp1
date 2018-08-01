@@ -16,7 +16,9 @@ build_script:
       exit -1
     }
 
-    Send-MsbuildLogAppveyor (Get-Item -Path ".\").FullName + "\output.binlog"
+    $binLogPath = (Get-Item -Path ".\").FullName + "\output.binlog"
+    
+    Send-MsbuildLogAppveyor $binLogPath
 artifacts:
 - path: output.log
   name: log
