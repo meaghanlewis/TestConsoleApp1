@@ -61,7 +61,7 @@ function  Send-MsbuildLogAppveyor {
         [string] $Path
     )
 
-    $RepoOwner, $RepoName = $env:APPVEYOR_PULL_REQUEST_HEAD_REPO_NAME.Split('/');
+    $RepoOwner, $RepoName = ($env:APPVEYOR_PULL_REQUEST_HEAD_REPO_NAME).Split('/');
     $CloneRoot = $env:APPVEYOR_BUILD_FOLDER
     $HeadCommit = $env:APPVEYOR_PULL_REQUEST_HEAD_COMMIT
 
