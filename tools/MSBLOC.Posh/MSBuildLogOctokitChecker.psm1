@@ -1,6 +1,4 @@
 
-$script:BaseUrl = 'http://msblocweb.azurewebsites.net'
-
 function  Send-MsbuildLog {
     [CmdletBinding()]
     param (
@@ -18,17 +16,17 @@ function  Send-MsbuildLog {
         [string] $HeadCommit
     )
 
+    If(-not [System.IO.Path]::IsPathRooted($Path)) {
+        $Path = [System.IO.Path]::Combine($PWD, $Path);
+    }
+
     #TODO: Stream this
     $FileBytes = [System.IO.File]::ReadAllBytes($Path);
-    $FileEnc = [System.Text.Encoding]::GetEncoding('UTF-8').GetString($FileBytes);
+    $FileEnc = [System.Text.Encoding]::GetEncoding("ISO-8859-1").GetString($FileBytes);
     $FileInfo = New-Object System.IO.FileInfo @($Path)
     $Boundary = [System.Guid]::NewGuid().ToString();
     $LF = "`r`n";
     $Body = @(
-        "--$Boundary",
-        "Content-Disposition: form-data; name=`"BinaryLogFile`"; filename=`"$($FileInfo.Name)`"",
-        "Content-Type: application/octet-stream$LF",
-        $FileEnc,
         "--$Boundary",
         "Content-Disposition: form-data; name=`"RepoOwner`"$LF",
         $RepoOwner
@@ -36,21 +34,48 @@ function  Send-MsbuildLog {
         "Content-Disposition: form-data; name=`"RepoName`"$LF",
         $RepoName
         "--$Boundary",
+        "Content-Disposition: form-data; name=`"CommitSha`"$LF",
+        $HeadCommit,
+        "--$Boundary",
         "Content-Disposition: form-data; name=`"CloneRoot`"$LF",
         $CloneRoot
         "--$Boundary",
-        "Content-Disposition: form-data; name=`"CommitSha`"$LF",
-        $HeadCommit
+        "Content-Disposition: form-data; name=`"BinaryLogFile`"; filename=`"$($FileInfo.Name)`"",
+        "Content-Type: application/octet-stream$LF",
+        $FileEnc,
         "--$Boundary--$LF"
     ) -join $LF
 
-    $Uri = GetUploadUrl $script:BaseUrl
-    Invoke-RestMethod `
-        -Method POST `
-        -Uri $Uri `
-        -ContentType "multipart/form-data; boundary=`"$Boundary`"" `
-        -Body $Body
+    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+    $headers.Add("Accept", "application/json")
 
+    $Uri = GetUploadUrl
+
+    $ProxyUri = [Uri]$null
+    $Proxy = [System.Net.WebRequest]::GetSystemWebProxy()
+    if ($Proxy) {
+        $Proxy.Credentials = [System.Net.CredentialCache]::DefaultCredentials
+        $ProxyUri = $Proxy.GetProxy("$Uri")
+    }
+
+    if ($ProxyUri -ne $Uri){
+        Invoke-RestMethod `
+            -Method POST `
+            -Uri $Uri `
+            -ContentType "multipart/form-data; boundary=$Boundary" `
+            -Body $Body `
+            -Headers $Headers `
+            -Proxy $ProxyUri `
+            -ProxyUseDefaultCredentials
+    }
+    else {
+        Invoke-RestMethod `
+            -Method POST `
+            -Uri $Uri `
+            -ContentType "multipart/form-data; boundary=$Boundary" `
+            -Body $Body `
+            -Headers $Headers
+    }
 }
 
 function  Send-MsbuildLogAppveyor {
@@ -79,10 +104,8 @@ function GetUploadUrl() {
     [CmdletBinding()]
     [OutputType([String])]
     param (
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $BaseUrl
     )
+    $BaseUrl = If($env:MSBLOC_POSH_URL) {$env:MSBLOC_POSH_URL} else {'http://msblocweb.azurewebsites.net'}
     $FullUrl = '{0}/api/log/upload' -f $BaseUrl
     Write-Verbose "Upload Url: $FullUrl"
     return $FullUrl
