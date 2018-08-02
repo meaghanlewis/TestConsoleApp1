@@ -97,7 +97,7 @@ function  Send-MsbuildLogAppveyor {
     $CloneRoot = $env:APPVEYOR_BUILD_FOLDER
     $HeadCommit = $env:APPVEYOR_REPO_COMMIT
 
-    Send-MsbuildLog $Path $CloneRoot $RepoOwner $RepoName $HeadCommit
+    Send-MsbuildLog $Path $RepoOwner $RepoName $CloneRoot $HeadCommit
 }
 
 # Export only the functions using PowerShell standard verb-noun naming.
