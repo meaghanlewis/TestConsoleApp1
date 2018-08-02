@@ -2,8 +2,6 @@ version: 1.0.{build}
 image: Visual Studio 2017
 build_script:
 - ps: >-
-    echo (Get-Item -Path ".\").FullName
-
     Import-Module .\tools\MSBLOC.Posh\MSBuildLogOctokitChecker.psm1
 
     msbuild TestConsoleApp1.sln --% /bl:output.binlog /flp:logfile=output.log;verbosity=diagnostic

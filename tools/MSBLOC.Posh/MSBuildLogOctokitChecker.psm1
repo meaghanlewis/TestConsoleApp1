@@ -16,12 +16,6 @@ function  Send-MsbuildLog {
         [string] $HeadCommit
     )
 
-    echo "Path $Path"
-    echo "RepoOwner $RepoOwner"
-    echo "RepoName $RepoName"
-    echo "CloneRoot $CloneRoot"
-    echo "HeadCommit $HeadCommit"
-
     If(-not [System.IO.Path]::IsPathRooted($Path)) {
         $Path = [System.IO.Path]::Combine($PWD, $Path);
     }
