@@ -9,7 +9,7 @@ after_build:
     Get-location (Get-Item -Path ".\").FullName
     $newLocation = (Get-Location).Path
     
-    Write-Host "Changed Location from $($oldLocation) to $($newLocation)"
+    Write-Debug "Changed Location from $($oldLocation) to $($newLocation)"
     
     if (! $?) {
       echo "Build Error"
