@@ -13,7 +13,7 @@ after_build:
     
     Write-Debug "Changed Location from $($oldLocation) to $($newLocation)"
     
-    ls .
+    Get-ChildItem
 
     if (! $?) {
       Send-MsbuildLogAppveyor output.binlog
