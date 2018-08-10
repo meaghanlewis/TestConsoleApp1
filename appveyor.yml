@@ -1,30 +1,25 @@
 version: 1.0.{build}
 image: Visual Studio 2017
-build_script:
+build: TestConsoleApp1.sln
+after_build:
 - ps: >-
-    if(-not $env:APPVEYOR_PULL_REQUEST_NUMBER)
-    {
-      Import-Module .\tools\MSBLOC.Posh\MSBuildLogOctokitChecker.psm1
-    }
+    Import-Module .\tools\MSBLOC.Posh\MSBuildLogOctokitChecker.psd1
 
-    msbuild TestConsoleApp1.sln --% /bl:output.binlog /verbosity:minimal
+    $oldLocation = (Get-Location).Path
+    Get-location (Get-Item -Path ".\").FullName
+    $newLocation = (Get-Location).Path
+    
+    Write-Host "Changed Location from $($oldLocation) to $($newLocation)"
     
     if (! $?) {
       echo "Build Error"
-      Push-AppveyorArtifact output.binlog -Type File
-      
-      if(-not $env:APPVEYOR_PULL_REQUEST_NUMBER)
-      { 
-        Send-MsbuildLogAppveyor output.binlog
-      }
-      
+      Send-MsbuildLogAppveyor output.binlog
       exit -1
     }
+
+    $binLogPath = (Get-Item -Path ".\").FullName + "\output.binlog"
     
-    if(-not $env:APPVEYOR_PULL_REQUEST_NUMBER)
-    {
-      Send-MsbuildLogAppveyor output.binlog
-    }
+    Send-MsbuildLogAppveyor $binLogPath
 artifacts:
+- path: output.log
 - path: output.binlog
-  name: File
