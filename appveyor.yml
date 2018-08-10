@@ -1,27 +1,12 @@
 version: 1.0.{build}
 image: Visual Studio 2017
-build_script: msbuild TestConsoleApp1.sln /bl:output.binlog /verbosity:minimal
+build:
+    project: TestConsoleApp1.sln
 after_build:
 - ps: >-
     Import-Module .\tools\MSBLOC.Posh\MSBuildLogOctokitChecker.psd1
 
-    $oldLocation = (Get-Location).Path
-
-    Set-location (Get-Item -Path ".\").FullName
-
-    $newLocation = (Get-Location).Path
-    
-    Write-Debug "Changed Location from $($oldLocation) to $($newLocation)"
-    
-    Get-ChildItem
-
-    if (! $?) {
-      Send-MsbuildLogAppveyor output.binlog
-
-      throw $_
-    }
-
-    $binLogPath = (Get-Item -Path ".\").FullName + "\output.binlog"
+    $binLogPath = Join-Path (Get-Item -Path ".\").FullName "\msbuild.binlog"
     
     Send-MsbuildLogAppveyor $binLogPath
 artifacts:
