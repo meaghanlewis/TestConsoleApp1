@@ -7,7 +7,7 @@ after_build:
 
     $oldLocation = (Get-Location).Path
 
-    Get-location (Get-Item -Path ".\").FullName
+    Set-location (Get-Item -Path ".\").FullName
 
     $newLocation = (Get-Location).Path
     
@@ -23,9 +23,9 @@ after_build:
     
     Send-MsbuildLogAppveyor $binLogPath
 artifacts:
-- path: output.log
+- path: msbuild.log
   name: log
-- path: output.binlog
+- path: msbuild.binlog
   name: log
 - path: .\TestConsoleApp1\bin\Debug
   name: Binaries
