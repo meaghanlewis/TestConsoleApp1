@@ -6,15 +6,17 @@ after_build:
     Import-Module .\tools\MSBLOC.Posh\MSBuildLogOctokitChecker.psd1
 
     $oldLocation = (Get-Location).Path
+
     Get-location (Get-Item -Path ".\").FullName
+
     $newLocation = (Get-Location).Path
     
     Write-Debug "Changed Location from $($oldLocation) to $($newLocation)"
     
     if (! $?) {
-      echo "Build Error"
       Send-MsbuildLogAppveyor output.binlog
-      exit -1
+
+      throw $_
     }
 
     $binLogPath = (Get-Item -Path ".\").FullName + "\output.binlog"
@@ -22,4 +24,9 @@ after_build:
     Send-MsbuildLogAppveyor $binLogPath
 artifacts:
 - path: output.log
+  name: log
 - path: output.binlog
+  name: log
+- path: .\TestConsoleApp1\bin\Debug
+  name: Binaries
+
