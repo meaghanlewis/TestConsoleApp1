@@ -13,6 +13,8 @@ after_build:
     
     Write-Debug "Changed Location from $($oldLocation) to $($newLocation)"
     
+    ls .
+
     if (! $?) {
       Send-MsbuildLogAppveyor output.binlog
 
