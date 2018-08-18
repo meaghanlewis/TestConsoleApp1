@@ -2,29 +2,14 @@ version: 1.0.{build}
 image: Visual Studio 2017
 build_script:
 - ps: >-
+    msbuild TestConsoleApp1.sln --% /bl:output.binlog /verbosity:minimal
+after_build:
+- ps: >-
     if(-not $env:APPVEYOR_PULL_REQUEST_NUMBER)
     {
       Import-Module .\tools\MSBLOC.Posh\MSBuildLogOctokitChecker.psm1
-    }
-
-    msbuild TestConsoleApp1.sln --% /bl:output.binlog /verbosity:minimal
-    
-    if (! $?) {
-      echo "Build Error"
-      Push-AppveyorArtifact output.binlog -Type File
-      
-      if(-not $env:APPVEYOR_PULL_REQUEST_NUMBER)
-      { 
-        Send-MsbuildLogAppveyor output.binlog
-      }
-      
-      exit -1
-    }
-    
-    if(-not $env:APPVEYOR_PULL_REQUEST_NUMBER)
-    {
       Send-MsbuildLogAppveyor output.binlog
     }
 artifacts:
 - path: output.binlog
-  name: File
+  type: File
