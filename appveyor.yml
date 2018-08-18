@@ -3,7 +3,7 @@ image: Visual Studio 2017
 build_script:
 - ps: >-
     msbuild TestConsoleApp1.sln --% /bl:output.binlog /verbosity:minimal
-after_build:
+on_finish:
 - ps: >-
     if(-not $env:APPVEYOR_PULL_REQUEST_NUMBER)
     {
