@@ -3,9 +3,6 @@
 ###############################################################################
 * text=auto
 
-# Because of inline powershell
-appveyor.yml eol=crlf
-
 ###############################################################################
 # Set default behavior for command prompt diff.
 #
