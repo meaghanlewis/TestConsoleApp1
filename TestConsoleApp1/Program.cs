@@ -11,5 +11,23 @@ namespace TestConsoleApp1
         static void Main(string[] args)
         {
         }
+
+        class MyClass: IDisposable
+        {
+            private MyOTherClass _inner = new MyOTherClass();
+
+            public void Dispose()
+            {
+                
+            }
+        }
+
+        class MyOTherClass: IDisposable
+        {
+            public void Dispose()
+            {
+                
+            }
+        }
     }
 }
