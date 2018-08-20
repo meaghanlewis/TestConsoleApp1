@@ -12,4 +12,12 @@ namespace TestConsoleApp1
         {
         }
     }
+
+    class Main
+    {
+        static void Hello()
+        {
+            Console.WriteLine("Hello");
+        }
+    }
 }
