@@ -4,7 +4,8 @@ environment:
   MSBLOC_JWT:
     secure: eWX23ydbzsvhziCB8woiK9EwwDv+ppl4E8j9ZuxwyrYOP6oQ9VFhBdsRvXiZo8AYsfNsYXMEPzndp5YhrbnNuE48FQ3QJQjmmISgpZN/V1INz5ukENLm3yeRYzg6YCDtRgv25+geZyrgG0oZ6rAR0GpTmBKG0SxFimkK6hA4GiB54+7BDiRQvIw776hyVUFWB16oflh8D666JjbwjSwgd6rsS05zdTav7FF0+C9w+hKPpxclH6Bej8nK3BjlGWUsPNslNynz44J+Kw1ZA5OkpZl2MzBEplqJC7OFlZ6EmggWdWC5AHJKB1Xtd9iY9OYSxul856RONaZpsbqaJ59G1g8GwRo1BvLrQqwQMp1OJpBR0XIbguIf1Pdsh/UfohcRuSCtjKbDgOz7Dn2YpLap5hDaJmJLYcP4zXbCTjx7IFnR4Zwe5a57wl37HRzUWb5SRCD03hr4fCGZnzDVc//YnG7FveBRA5I60dIJgBoxrXm3e7j4u74VXve6eQL1zxHHCHUQ+1jeWTYV2GSeOQLewnK0kbrS6Ce7m/Ay1yEP4LbM+qAlOisra3tfYaoSbNPIg+mOLa7muWMDlb2UdsV3g+WGVOUMD1rSsiZUr1JlAHGRN+GYyACiz+rcpvxFjH+rorHlUmrnpzPjA79JIEvjKSRAZqRx0dlNWASJYVxuXc8=
 build_script:
-- ps: >-
+- ps: |
+    nuget restore TestConsoleApp1.sln -Verbosity Quiet
     msbuild TestConsoleApp1.sln --% /bl:output.binlog /verbosity:minimal
 artifacts:
 - path: output.binlog
