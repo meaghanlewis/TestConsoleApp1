@@ -10,6 +10,7 @@ namespace TestConsoleApp1
     {
         static void Main(string[] args)
         {
+            //Adding some comment here for an informational item
         }
     }
 }
