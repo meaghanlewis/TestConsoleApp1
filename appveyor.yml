@@ -10,9 +10,11 @@ build_script:
 - ps: |
     nuget restore TestConsoleApp1.sln -Verbosity Quiet
     msbuild TestConsoleApp1.sln --% /bl:output.binlog /verbosity:minimal
-artifacts:
-- path: output.binlog
-  type: File
 on_finish:
 - cmd: IF [%APPVEYOR_PULL_REQUEST_NUMBER%]==[] BCC.MSBuildLog -c "C:\Projects\TestConsoleApp1" -i output.binlog -o output.binlog.json
 - cmd: IF [%APPVEYOR_PULL_REQUEST_NUMBER%]==[] BCC.Submission -h %APPVEYOR_REPO_COMMIT% -i output.binlog.json -t %BCC_JWT%
+artifacts:
+- path: output.binlog
+  type: File
+- path: output.binlog.json
+  type: File
