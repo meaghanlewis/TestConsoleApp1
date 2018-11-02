@@ -1,8 +1,11 @@
 version: 1.0.{build}
 image: Visual Studio 2017
+install:
+  - choco install --no-progress BCC-MSBuildLog
+  - choco install --no-progress BCC-Submission
 environment:
-  MSBLOC_JWT:
-    secure: eWX23ydbzsvhziCB8woiK9EwwDv+ppl4E8j9ZuxwyrYOP6oQ9VFhBdsRvXiZo8AYsfNsYXMEPzndp5YhrbnNuE48FQ3QJQjmmISgpZN/V1INz5ukENLm3yeRYzg6YCDtRgv25+geZyrgG0oZ6rAR0GpTmBKG0SxFimkK6hA4GiB54+7BDiRQvIw776hyVUFWB16oflh8D666JjbwjSwgd6rsS05zdTav7FF0+C9w+hKPpxclH6Bej8nK3BjlGWUsPNslNynz44J+Kw1ZA5OkpZl2MzBEplqJC7OFlZ6EmggWdWC5AHJKB1Xtd9iY9OYSxul856RONaZpsbqaJ59G1g8GwRo1BvLrQqwQMp1OJpBR0XIbguIf1Pdsh/UfohcRuSCtjKbDgOz7Dn2YpLap5hDaJmJLYcP4zXbCTjx7IFnR4Zwe5a57wl37HRzUWb5SRCD03hr4fCGZnzDVc//YnG7FveBRA5I60dIJgBoxrXm3e7j4u74VXve6eQL1zxHHCHUQ+1jeWTYV2GSeOQLewnK0kbrS6Ce7m/Ay1yEP4LbM+qAlOisra3tfYaoSbNPIg+mOLa7muWMDlb2UdsV3g+WGVOUMD1rSsiZUr1JlAHGRN+GYyACiz+rcpvxFjH+rorHlUmrnpzPjA79JIEvjKSRAZqRx0dlNWASJYVxuXc8=
+  BCC_JWT:
+    secure: eWX23ydbzsvhziCB8woiK9EwwDv+ppl4E8j9ZuxwyrYOP6oQ9VFhBdsRvXiZo8AYsfNsYXMEPzndp5YhrbnNuE48FQ3QJQjmmISgpZN/V1INz5ukENLm3yeRYzg6YCDtRgv25+geZyrgG0oZ6rAR0AxhhRLA5MxrMY8KJHjO+5XaVSW/F2y2UPxXFfAg6n32PBAdPDOLaSmzGR/ZeqicppP5jzhnUOKm/CNarIWKNp7O+wxVcjyVQPa+ipVXETDwR0AvZSp57s0JL36yvsYK1KHwP2PgT2NYMVHJU0RjbZ6iHLqQKOx7JtvUeTfJas/Rm88MS0a5/J/hnmtLDYWszYQaThmUf6ZZj8oeGBaHoo7xc9b1ZrprYJNMZzKkPraQgWf6MPB/A29tqw0ZFLzgOadi469CwY6HpHoJHZPhAr7kJZl6mg1v2E+KCPfRnSX1TrufvdoSZDDPw+Z58RS6xhlYE79Y+0d6oq9Su0DiUdlbO63SCz4n8mnIwhxskAt5YzGrjTz4DdUFcBqWjcS/PE2Nbtotk31B76EYb9aowMsRWJHa9MVkBVzbc0BpAXKZ0Z0N9sryfU1LcWmS0kyRhrve4Tvwv49XEu97OSEm0wmwPZbqMYUY/NxldNai6kU+XpKlq5HsFIYlom7l6pNW4v3yJta0DXpjqJFCyeI5j/yzdbtbbzwtLnpJDjqQgSsCoSATIniR9pPeLIGVk2Rsyw==
 build_script:
 - ps: >-
     msbuild TestConsoleApp1.sln --% /bl:output.binlog /verbosity:minimal
@@ -10,9 +13,5 @@ artifacts:
 - path: output.binlog
   type: File
 on_finish:
-- ps: >-
-    if(-not $env:APPVEYOR_PULL_REQUEST_NUMBER)
-    {
-      Import-Module .\tools\MSBLOC.Posh\MSBuildLogOctokitChecker.psm1
-      Send-MsbuildLogAppveyor -Path output.binlog -Token $env:MSBLOC_JWT
-    }
+- cmd: IF [%APPVEYOR_PULL_REQUEST_NUMBER%]==[] BCC.MSBuildLog -c "C:\Projects\TestConsoleApp1" -i output.binlog -o output.binlog.json
+- cmd: IF [%APPVEYOR_PULL_REQUEST_NUMBER%]==[] BCC.Submission -h %APPVEYOR_REPO_COMMIT% -i output.binlog.json -t %BCC_JWT%
