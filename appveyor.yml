@@ -13,5 +13,7 @@ artifacts:
 - path: output.binlog
   type: File
 on_finish:
-- cmd: IF [%APPVEYOR_PULL_REQUEST_NUMBER%]==[] BCC.MSBuildLog -c "C:\Projects\TestConsoleApp1" -i output.binlog -o output.binlog.json 
+- cmd: IF [%APPVEYOR_PULL_REQUEST_NUMBER%]==[] echo BCC.MSBuildLog -c "C:\Projects\TestConsoleApp1" -i output.binlog -o output.binlog.json
+- cmd: IF [%APPVEYOR_PULL_REQUEST_NUMBER%]==[] BCC.MSBuildLog -c "C:\Projects\TestConsoleApp1" -i output.binlog -o output.binlog.json
+- cmd: IF [%APPVEYOR_PULL_REQUEST_NUMBER%]==[] echo BCC.Submission -h %APPVEYOR_REPO_COMMIT% -i output.binlog.json -t %BCC_JWT%
 - cmd: IF [%APPVEYOR_PULL_REQUEST_NUMBER%]==[] BCC.Submission -h %APPVEYOR_REPO_COMMIT% -i output.binlog.json -t %BCC_JWT%
