@@ -9,6 +9,7 @@ environment:
 build_script:
 - ps: >-
     msbuild TestConsoleApp1.sln --% /bl:output.binlog /verbosity:minimal
+on_finish:
 - cmd: IF [%APPVEYOR_PULL_REQUEST_NUMBER%]==[] BCC.MSBuildLog -c "C:\Projects\TestConsoleApp1" -i output.binlog -o output.binlog.json
 - cmd: IF [%APPVEYOR_PULL_REQUEST_NUMBER%]==[] BCC.Submission -h %APPVEYOR_REPO_COMMIT% -i output.binlog.json -t %BCC_JWT%
 artifacts:
